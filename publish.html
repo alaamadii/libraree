@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>نشر كتاب — Libraree</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #FDF5E6;
+            --accent: #6B0F1A;
+            --dark: #0B2545;
+            --muted: #6C6C6C;
+            --card: #ffffff;
+            --radius: 14px;
+            font-family: 'Cairo', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            margin: 0;
+            background: linear-gradient(180deg, var(--bg), #fff);
+            color: var(--dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 28px
+        }
+
+        .logo {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            text-decoration: none;
+            color: inherit
+        }
+
+        .logo .mark {
+            width: 46px;
+            height: 46px;
+            background: var(--dark);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 700
+        }
+
+        nav ul {
+            display: flex;
+            gap: 18px;
+            list-style: none;
+            margin: 0;
+            padding: 0
+        }
+
+        nav a {
+            color: var(--dark);
+            text-decoration: none;
+            font-weight: 600
+        }
+
+        .btn {
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1px solid transparent;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .btn.primary {
+            background: var(--dark);
+            color: #fff
+        }
+
+        .btn.accent {
+            background: var(--accent);
+            color: #fff
+        }
+
+        .btn.ghost {
+            background: transparent;
+            border-color: var(--dark);
+            color: var(--dark)
+        }
+
+        main {
+            flex: 1;
+            padding: 40px 28px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start
+        }
+
+        .publish-card {
+            background: var(--card);
+            padding: 32px;
+            border-radius: 16px;
+            box-shadow: 0 6px 20px rgba(11, 37, 69, 0.06);
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .publish-card h2 {
+            margin-top: 0;
+            margin-bottom: 8px;
+            font-size: 24px;
+        }
+
+        .publish-card p {
+            color: var(--muted);
+            margin-bottom: 24px;
+            margin-top: 0;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        input[type=text],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 10px;
+            border: 1px solid #e6e6e6;
+            font-family: inherit;
+            font-size: 15px;
+            background: #fdfcfc;
+            transition: border-color 0.2s;
+        }
+
+        input[type=text]:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--dark);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        footer {
+            padding: 28px;
+            background: #fff;
+            margin-top: auto;
+        }
+
+        @media (max-width:600px) {
+            nav ul {
+                display: none
+            }
+
+            header {
+                padding: 12px
+            }
+
+            main {
+                padding: 20px 12px;
+            }
+
+            .publish-card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <a href="index.html" class="logo">
+            <div class="mark">LB</div>
+            <div>
+                <div style="font-weight:700">Libraree</div>
+                <div style="font-size:12px;color:var(--muted)">منصة كتب ومجتمع للكتّاب والقراء</div>
+            </div>
+        </a>
+        <nav>
+            <ul>
+                <li><a href="index.html">الرئيسية</a></li>
+                <li><a href="#">المشاريع</a></li>
+                <li><a href="#">عنّا</a></li>
+                <li><a href="#">تواصل معنا</a></li>
+            </ul>
+        </nav>
+        <div style="display:flex;gap:10px;align-items:center">
+            <div style="display:flex;align-items:center;gap:8px;font-weight:600;color:var(--dark)">
+                <div
+                    style="width:36px;height:36px;border-radius:50%;background:#e0e0e0;display:flex;align-items:center;justify-content:center;color:#666">
+                    م</div>
+                <span>مرحباً، مستخدم</span>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="publish-card">
+            <h2>إضافة كتاب جديد</h2>
+            <p>شارك إبداعاتك مع مجتمع القرّاء. قم بتعبئة تفاصيل كتابك أدناه.</p>
+
+            <form id="publishForm">
+                <div class="form-group">
+                    <label for="bookTitle">عنوان الكتاب</label>
+                    <input type="text" id="bookTitle" name="title" placeholder="أدخل عنوان الكتاب (مثل: فن اللامبالاة)"
+                        required>
+                </div>
+
+                <div class="form-group">
+                    <label for="bookCategory">التصنيف</label>
+                    <select id="bookCategory" name="category" required>
+                        <option value="" disabled selected>اختر التصنيف المناسب</option>
+                        <option value="tech">التقنية</option>
+                        <option value="science">العلوم</option>
+                        <option value="romantic">الرومانسية</option>
+                        <option value="history">التاريخ</option>
+                        <option value="business">العمل والأعمال</option>
+                        <option value="literature">الأدب والروايات</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="bookDesc">وصف الكتاب</label>
+                    <textarea id="bookDesc" name="description"
+                        placeholder="اكتب نبذة مختصرة عن محتوى كتابك وما يميزه..." required></textarea>
+                </div>
+
+                <div style="display:flex;gap:12px;margin-top:32px">
+                    <button type="submit" class="btn primary" style="flex:1">نشر الكتاب</button>
+                    <button type="button" class="btn ghost" onclick="window.history.back()">إلغاء</button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <footer>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap">
+            <div>
+                <div style="font-weight:700">Libraree</div>
+                <div style="color:var(--muted);font-size:13px">شارك، اقرأ، واكتشف.</div>
+            </div>
+            <div style="color:var(--muted)">تابعنا عبر البريد الإلكتروني: info@example.com</div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // // Database Setup stub - Replace with actual when Supabase is ready
+        // const supabaseUrl = 'https://xyzcompany.supabase.co';
+        // const supabaseKey = 'public-anon-key';
+        // const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+        document.getElementById('publishForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const title = document.getElementById('bookTitle').value;
+            const category = document.getElementById('bookCategory').value;
+            const description = document.getElementById('bookDesc').value;
+
+            const submitBtn = document.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'جاري النشر...';
+            submitBtn.disabled = true;
+
+            try {
+                // Mocking Supabase insert call. Replace this entire block with:
+                // const { data, error } = await supabase.from('books').insert([
+                //     { title, category, description }
+                // ]);
+                // if (error) throw error;
+
+                await new Promise(resolve => setTimeout(resolve, 800)); // Simulate network request
+
+                alert('تم نشر الكتاب بنجاح! وسيكون متاحاً للقراء قريباً.');
+                document.getElementById('publishForm').reset();
+                window.location.href = 'index.html'; // Redirect back to home
+            } catch (error) {
+                console.error('Error publishing book:', error);
+                alert('حدث خطأ أثناء النشر. يرجى المحاولة مرة أخرى.');
+            } finally {
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+    </script>
+</body>
+
+</html>

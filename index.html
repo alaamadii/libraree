@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Libraree — Read and Share Books</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            beige: '#F9F4EB',
+            burgundy: '#800020',
+            mustard: '#C19A5B',
+            darkBlue: '#0B2545',
+            grayText: '#6C6C6C'
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            cairo: ['Cairo', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- React & ReactDOM -->
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+
+  <!-- Babel -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- Lucide Icons & FontAwesome for social -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    body {
+      background-color: #F9F4EB;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+
+    .bookshelf-mask {
+      clip-path: polygon(30% 0%, 100% 0%, 100% 100%, 30% 100%, 0% 50%);
+      border-radius: 40px;
+    }
+
+    .blob-mustard {
+      position: absolute;
+      bottom: -100px;
+      left: -100px;
+      width: 400px;
+      height: 400px;
+      background-color: #C19A5B;
+      border-radius: 50%;
+      z-index: -1;
+    }
+
+    .blob-burgundy {
+      position: absolute;
+      top: -100px;
+      right: -100px;
+      width: 300px;
+      height: 300px;
+      background-color: #800020;
+      border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+      z-index: -1;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel" data-type="module">
+    // ==========================================
+    // Supabase Setup
+    // ==========================================
+    // Database Setup stub - Replace with actual when Supabase is ready
+    // const supabaseUrl = 'https://xyzcompany.supabase.co';
+    // const supabaseKey = 'public-anon-key';
+    // const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+    const { useState, useEffect } = React;
+
+    // ==========================================
+    // Components
+    // ==========================================
+
+    const Navbar = ({ onNavigate, onLoginClick }) => (
+      <nav className="flex items-center justify-between px-12 py-6 relative z-10 w-full">
+        <div className="text-2xl font-bold font-cairo cursor-pointer" onClick={() => onNavigate('home')}>
+          libraree
+        </div>
+        <div className="flex space-x-8 text-lg font-cairo text-gray-800 hidden md:flex">
+          <button onClick={() => onNavigate('home')} className="hover:text-burgundy">Home</button>
+          <button className="hover:text-burgundy">project</button>
+          <button className="hover:text-burgundy">About</button>
+          <button className="hover:text-burgundy">contact us</button>
+        </div>
+        <div>
+          <button
+            onClick={onLoginClick}
+            className="flex items-center justify-center bg-burgundy text-white px-6 py-2 rounded-full font-sans shadow-lg hover:bg-opacity-90 transition"
+          >
+            Sign up <i className="fa-solid fa-arrow-right ml-2"></i>
+          </button>
+        </div>
+      </nav>
+    );
+
+    const Footer = () => (
+      <footer className="w-full bg-[#F9F4EB] border-t-2 border-black mt-16 px-12 py-8 relative overflow-hidden">
+        <div className="flex flex-col md:flex-row justify-between relative z-10">
+          <div className="mb-6 md:mb-0">
+            <h3 className="font-sans text-lg mb-4 text-gray-800">contect us</h3>
+            <div className="space-y-4 font-sans text-gray-800">
+              <p className="cursor-pointer hover:text-burgundy">become a writter</p>
+              <div>
+                <p className="mb-2">follow us</p>
+                <div className="flex space-x-3 text-3xl">
+                  <div className="bg-black text-white w-10 h-10 flex items-center justify-center rounded-md cursor-pointer"><i className="fa-brands fa-x-twitter"></i></div>
+                  <div className="text-pink-600 bg-white w-10 h-10 flex items-center justify-center rounded-md text-4xl shadow cursor-pointer"><i className="fa-brands fa-instagram"></i></div>
+                  <div className="text-blue-600 bg-white w-10 h-10 flex items-center justify-center rounded-full text-4xl shadow cursor-pointer"><i className="fa-brands fa-facebook"></i></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="font-sans text-gray-800 mt-6 md:mt-0 text-right md:text-left">
+            <h3 className="text-lg mb-2">email us:</h3>
+            <p className="ml-0 md:ml-4">libraree.alaa.com</p>
+            <p className="ml-0 md:ml-4">alaamadi005@gmail.com</p>
+          </div>
+        </div>
+      </footer>
+    );
+
+    const Hero = ({ onLoginClick }) => (
+      <section className="relative px-12 py-16 flex flex-col md:flex-row items-center justify-between min-h-[70vh]">
+        <div className="blob-mustard"></div>
+
+        <div className="w-full md:w-1/2 z-10 pr-8">
+          <h1 className="text-5xl md:text-6xl font-bold font-sans text-gray-800 mb-6 leading-tight">
+            Read and Share Books
+          </h1>
+          <p className="text-xl text-grayText font-sans mb-8 leading-relaxed max-w-lg">
+            Welcome to Libraree the largest online book community. Discover books in every category and share your favorite writers!
+          </p>
+          <button
+            onClick={onLoginClick}
+            className="bg-burgundy text-white px-10 py-3 rounded-full font-sans text-xl shadow-lg hover:bg-opacity-90 transition"
+          >
+            join us
+          </button>
+        </div>
+
+        <div className="w-full md:w-1/2 mt-12 md:mt-0 flex justify-end relative z-10">
+          <img
+            src="https://images.unsplash.com/photo-1507842217343-583bb7270b66?q=80&w=2690&auto=format&fit=crop"
+            alt="Bookshelf"
+            className="w-full h-[500px] object-cover bookshelf-mask shadow-2xl"
+            loading="lazy"
+          />
+        </div>
+      </section>
+    );
+
+    const Categories = () => {
+      const cats = [
+        { title: 'TECHNOLOGY', img: 'https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=800&auto=format&fit=crop' },
+        { title: 'SCIENCE', img: 'https://images.unsplash.com/photo-1532094349884-543bc11b234d?q=80&w=800&auto=format&fit=crop' },
+        { title: 'ROMANTIC', img: 'https://images.unsplash.com/photo-1474552226712-ac0f0961a954?q=80&w=800&auto=format&fit=crop' },
+        { title: 'HISTORY', img: 'https://images.unsplash.com/photo-1461151304267-38535e780c79?q=80&w=800&auto=format&fit=crop' },
+      ];
+
+      return (
+        <section className="py-16 relative">
+          <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-mustard rounded-bl-[200px] z-0 opacity-50"></div>
+          <div className="mx-8 z-10 relative">
+            <h2 className="text-3xl text-gray-800 font-sans mb-10 pl-4">Categories</h2>
+            <div className="flex flex-wrap gap-8 justify-center">
+              {cats.map((c, i) => (
+                <div key={i} className="relative w-64 h-64 rounded-3xl overflow-hidden shadow-lg group cursor-pointer hover:scale-105 transition-transform">
+                  <img src={c.img} alt={c.title} className="w-full h-full object-cover group-hover:opacity-80 transition" loading="lazy" />
+                  <div className="absolute inset-0 bg-black bg-opacity-30 rounded-3xl mix-blend-multiply"></div>
+                  <h3 className="absolute inset-0 flex items-center justify-center text-white font-bold text-xl tracking-wider">
+                    {c.title}
+                  </h3>
+                </div>
+              ))}
+              <div className="flex items-center justify-center w-32">
+                <button className="bg-burgundy text-white px-6 py-2 rounded-full font-sans flex items-center shadow hover:bg-opacity-90 transition">
+                  More <i className="fa-solid fa-arrow-right ml-2"></i>
+                </button>
+              </div>
+            </div>
+
+            <div className="mt-24 max-w-4xl mx-auto text-center">
+              <h2 className="text-4xl font-bold font-serif mb-8 text-black">
+                " A room without books is like a body without soul" <span className="text-sm font-sans font-normal text-grayText">Marcus Tullius</span>
+              </h2>
+              <p className="text-xl font-bold font-sans text-black mb-10">
+                Be part of our community read books, discover new ideas, and share your own writings
+              </p>
+              <button className="bg-burgundy text-white px-10 py-4 rounded-full font-sans shadow-lg hover:bg-opacity-90 transition text-lg">
+                Join Us for Free
+              </button>
+            </div>
+          </div>
+          <div className="absolute bottom-[-150px] left-0 w-[300px] h-[300px] bg-gray-300 rounded-tr-[150px] z-0 opacity-80"></div>
+          <div className="absolute bottom-[-150px] right-0 w-[300px] h-[500px] bg-burgundy rounded-tl-[150px] border-t-[80px] border-white z-0"></div>
+        </section>
+      );
+    };
+
+    const BestWriters = () => {
+      const writers = [
+        {
+          name: "Amani Khalil",
+          cat: "Romantic",
+          avatar: "https://api.dicebear.com/7.x/adventurer/svg?seed=Amani",
+          desc: "Four of her posts received the highest number of likes in writings this month"
+        },
+        {
+          name: "luke mike",
+          cat: "Action",
+          avatar: "https://api.dicebear.com/7.x/adventurer/svg?seed=Luke",
+          desc: "Four of his posts received the highest number of likes in writings this month"
+        }
+      ];
+
+      return (
+        <section className="py-16 relative">
+          <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-burgundy rounded-bl-full z-0 opacity-90"></div>
+          <div className="absolute top-0 left-0 w-[400px] h-[400px] bg-gray-300 rounded-br-full z-0 opacity-80"></div>
+          <div className="px-12 z-10 relative mt-16">
+            <h2 className="text-2xl font-bold font-sans text-gray-800 mb-10 text-center md:text-left">Best writers for this month:</h2>
+            <div className="flex flex-col md:flex-row justify-center gap-16 items-center">
+              {writers.map((w, i) => (
+                <div key={i} className="bg-[#FAF5EB] rounded-lg shadow-xl p-8 max-w-md w-full relative border border-gray-100 flex flex-col items-center">
+                  <div className="flex w-full mb-6">
+                    <div className="w-32 h-32 bg-white rounded-full flex items-center justify-center p-2 shadow-inner border border-gray-100 mr-6">
+                      <img src={w.avatar} alt={w.name} className="w-full h-full rounded-full" loading="lazy" />
+                    </div>
+                    <div className="flex flex-col justify-center">
+                      <p className="font-bold text-lg mb-1">category</p>
+                      <p className="text-xl text-gray-700">{w.cat}</p>
+                    </div>
+                  </div>
+                  <div className="w-full flex mb-6">
+                    <p className="font-bold text-lg mr-4">information:</p>
+                    <p className="text-xl text-gray-700">{w.name}</p>
+                  </div>
+                  <p className="text-center text-grayText mb-8">
+                    {w.desc}
+                  </p>
+                  <div className="w-full flex justify-end">
+                    <button className="bg-burgundy text-white px-6 py-2 rounded-full font-sans shadow hover:bg-opacity-90 transition">
+                      see more
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      );
+    };
+
+    // --- Authentication & Portal ---
+
+    const AuthModal = ({ isOpen, onClose, onLoginSuccess }) => {
+      const [isLogin, setIsLogin] = useState(true);
+      const [email, setEmail] = useState('');
+      const [password, setPassword] = useState('');
+
+      if (!isOpen) return null;
+
+      const handleSubmit = (e) => {
+        e.preventDefault();
+        // Mocking Supabase Auth Success
+        console.log("Auth Submitted", { email, password, isLogin });
+        onLoginSuccess({ email, id: '123' });
+      };
+
+      return (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-sm w-full relative">
+            <button onClick={onClose} className="absolute top-4 right-4 text-gray-500 hover:text-black">
+              <i className="fa-solid fa-xmark text-xl"></i>
+            </button>
+            <h2 className="text-2xl font-bold font-sans mb-6 text-center text-burgundy">
+              {isLogin ? 'Welcome Back' : 'Create Account'}
+            </h2>
+            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+              <input
+                type="email"
+                placeholder="Email Address"
+                className="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:border-mustard"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+              <input
+                type="password"
+                placeholder="Password"
+                className="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:border-mustard"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+              <button type="submit" className="w-full bg-burgundy text-white py-3 rounded-lg font-bold hover:bg-opacity-90">
+                {isLogin ? 'Sign In' : 'Sign Up'}
+              </button>
+            </form>
+            <p className="mt-4 text-center text-sm font-sans text-gray-600">
+              {isLogin ? "Don't have an account? " : "Already have an account? "}
+              <button
+                onClick={() => setIsLogin(!isLogin)}
+                className="text-mustard font-bold hover:underline"
+              >
+                {isLogin ? 'Sign up' : 'Sign in'}
+              </button>
+            </p>
+          </div>
+        </div>
+      );
+    };
+
+    const ChoicePortal = ({ user, onRoleSelect }) => {
+      return (
+        <div className="min-h-screen bg-beige flex flex-col items-center justify-center p-8">
+          <h1 className="text-4xl font-bold font-sans text-burgundy mb-4 text-center">
+            Welcome to Libraree
+          </h1>
+          <p className="text-xl text-gray-700 mb-12 text-center max-w-lg">
+            What brings you here today? Please choose your primary role.
+          </p>
+          <div className="flex flex-col md:flex-row gap-8">
+            <button
+              onClick={() => onRoleSelect('reader')}
+              className="bg-white p-10 rounded-2xl shadow-xl hover:shadow-2xl transition transform hover:-translate-y-2 flex flex-col items-center w-64 border-t-4 border-mustard"
+            >
+              <i className="fa-solid fa-book-open text-6xl text-mustard mb-6"></i>
+              <h2 className="text-2xl font-bold text-gray-800 mb-2">Read</h2>
+              <p className="text-gray-500 text-center">Discover books, explore categories, and enjoy reading.</p>
+            </button>
+
+            <button
+              onClick={() => onRoleSelect('publisher')}
+              className="bg-white p-10 rounded-2xl shadow-xl hover:shadow-2xl transition transform hover:-translate-y-2 flex flex-col items-center w-64 border-t-4 border-burgundy"
+            >
+              <i className="fa-solid fa-pen-nib text-6xl text-burgundy mb-6"></i>
+              <h2 className="text-2xl font-bold text-gray-800 mb-2">Publish</h2>
+              <p className="text-gray-500 text-center">Share your writings, create posts, and build your audience.</p>
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    const ReadingSection = ({ onLogout }) => {
+      const [filter, setFilter] = useState('All');
+      const categories = ['All', 'Technology', 'Science', 'Romantic', 'History', 'Fiction'];
+
+      const mockBooks = [
+        { id: 1, title: "The Pragmatic Programmer", author: "Andy Hunt", category: "Technology", cover: "https://via.placeholder.com/150x220/0B2545/FFFFFF?text=Tech" },
+        { id: 2, title: "A Brief History of Time", author: "Stephen Hawking", category: "Science", cover: "https://via.placeholder.com/150x220/800020/FFFFFF?text=Science" },
+        { id: 3, title: "Pride and Prejudice", author: "Jane Austen", category: "Romantic", cover: "https://via.placeholder.com/150x220/C19A5B/FFFFFF?text=Romantic" },
+        { id: 4, title: "Clean Code", author: "Robert C. Martin", category: "Technology", cover: "https://via.placeholder.com/150x220/0B2545/FFFFFF?text=Code" },
+        { id: 5, title: "Sapiens", author: "Yuval Noah Harari", category: "History", cover: "https://via.placeholder.com/150x220/6C6C6C/FFFFFF?text=History" },
+      ];
+
+      const [books, setBooks] = useState([]);
+      const [loading, setLoading] = useState(true);
+
+      useEffect(() => {
+        // Mocking Supabase fetch call. Replace this entire block with:
+        // const { data, error } = await supabase.from('books').select('*');
+        // if (!error) setBooks(data);
+        setTimeout(() => {
+          setBooks(mockBooks);
+          setLoading(false);
+        }, 500);
+      }, []);
+
+      const filteredBooks = filter === 'All' ? books : books.filter(b => b.category === filter);
+
+      return (
+        <div className="min-h-screen bg-[#F9F4EB]">
+          <nav className="flex items-center justify-between px-12 py-6 bg-white shadow-sm">
+            <div className="text-2xl font-bold font-cairo text-burgundy">libraree <span className="text-sm text-gray-500 ml-2">Reading Portal</span></div>
+            <button onClick={onLogout} className="text-gray-500 hover:text-black">Logout</button>
+          </nav>
+
+          <main className="p-12">
+            <h1 className="text-3xl font-bold text-gray-800 mb-8">Discover Books</h1>
+
+            {/* Category Filter */}
+            <div className="flex gap-4 mb-10 overflow-x-auto pb-4">
+              {categories.map(c => (
+                <button
+                  key={c}
+                  onClick={() => setFilter(c)}
+                  className={`px-6 py-2 rounded-full font-sans transition whitespace-nowrap ${filter === c
+                    ? 'bg-mustard text-white shadow-md'
+                    : 'bg-white text-gray-600 border border-gray-200 hover:border-mustard hover:text-mustard'
+                    }`}
+                >
+                  {c}
+                </button>
+              ))}
+            </div>
+
+            {/* Books Grid */}
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8">
+              {loading ? (
+                <div className="col-span-full text-center py-12 text-gray-500">
+                  Loading books...
+                </div>
+              ) : filteredBooks.length > 0 ? (
+                filteredBooks.map(book => (
+                  <div key={book.id} className="bg-white rounded-lg p-4 shadow hover:shadow-lg transition cursor-pointer">
+                    <img src={book.cover || "https://via.placeholder.com/150x220/cccccc/000000?text=No+Cover"} alt={book.title} className="w-full h-auto rounded mb-4" loading="lazy" />
+                    <h3 className="font-bold text-gray-800 leading-tight mb-1">{book.title}</h3>
+                    <p className="text-sm text-gray-500 mb-2">{book.author}</p>
+                    <span className="text-xs bg-beige text-burgundy px-2 py-1 rounded inline-block">{book.category}</span>
+                  </div>
+                ))
+              ) : (
+                <div className="col-span-full text-center py-12 text-gray-500">
+                  No books found in this category.
+                </div>
+              )}
+            </div>
+          </main>
+        </div>
+      );
+    }
+
+    const PublishingDashboard = ({ onLogout }) => {
+      const handlePublishClick = () => {
+        // Send to publish page
+        window.location.href = 'publish.html';
+      };
+
+      return (
+        <div className="min-h-screen bg-[#F9F4EB]">
+          <nav className="flex items-center justify-between px-12 py-6 bg-white shadow-sm">
+            <div className="text-2xl font-bold font-cairo text-burgundy">libraree <span className="text-sm text-gray-500 ml-2">Publisher Hub</span></div>
+            <button onClick={onLogout} className="text-gray-500 hover:text-black">Logout</button>
+          </nav>
+          <main className="p-12 flex flex-col items-center justify-center h-[80vh]">
+            <i className="fa-solid fa-feather-pointed text-6xl text-gray-300 mb-6"></i>
+            <h1 className="text-3xl font-bold text-gray-800 mb-4">Your Publisher Dashboard</h1>
+            <p className="text-lg text-gray-600 mb-8 text-center max-w-md">Here you will be able to write new stories, manage your existing posts, and view your readership stats.</p>
+            <button onClick={handlePublishClick} className="bg-mustard text-white px-8 py-3 rounded-full font-bold shadow hover:bg-opacity-90">
+              Write a New Post
+            </button>
+          </main>
+        </div>
+      );
+    };
+
+    // ==========================================
+    // Main App Container
+    // ==========================================
+
+    const App = () => {
+      const [view, setView] = useState('home'); // home, portal, reader, publisher
+      const [showAuth, setShowAuth] = useState(false);
+      const [user, setUser] = useState(null);
+
+      const handleLoginSuccess = (userData) => {
+        setUser(userData);
+        setShowAuth(false);
+        setView('portal');
+      };
+
+      const handleLogout = () => {
+        setUser(null);
+        setView('home');
+      };
+
+      return (
+        <div className="min-h-screen flex flex-col overflow-hidden">
+          {view === 'home' && (
+            <>
+              <Navbar onNavigate={setView} onLoginClick={() => setShowAuth(true)} />
+              <Hero onLoginClick={() => setShowAuth(true)} />
+              <Categories />
+              <BestWriters />
+              <Footer />
+            </>
+          )}
+
+          {view === 'portal' && user && (
+            <ChoicePortal user={user} onRoleSelect={(role) => setView(role)} />
+          )}
+
+          {view === 'reader' && user && (
+            <ReadingSection onLogout={handleLogout} />
+          )}
+
+          {view === 'publisher' && user && (
+            <PublishingDashboard onLogout={handleLogout} />
+          )}
+
+          <AuthModal
+            isOpen={showAuth}
+            onClose={() => setShowAuth(false)}
+            onLoginSuccess={handleLoginSuccess}
+          />
+        </div>
+      );
+    };
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+
+</html>
